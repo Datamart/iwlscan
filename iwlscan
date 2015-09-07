@@ -20,17 +20,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+readonly SELF_NAME=$(basename $0)
 readonly AIRPORT="/System/Library/PrivateFrameworks/Apple80211.framework/Versions/A/Resources/airport"
 readonly IWLIST=$(which iwlist)
 readonly INTERFACE=$1
 readonly HEADERS="\"MAC\",\"SSID\",\"CHANNEL\",\"RSSI\",\"SECURITY\""
-
+readonly MAC_LENGTH=17
 
 function parse_airport() {
   echo "$HEADERS"
   while read ssid mac rssi channel ht cc security other; do
     if [[ "SSID" != "$ssid" ]]; then
-      if [[ 17 -ne ${#mac} ]]; then
+      if [[ $MAC_LENGTH -ne ${#mac} ]]; then
         mac="$(echo $mac | tr '[A-Z]' '[a-z]')"
         ssid="$ssid $mac"
         mac=$rssi
@@ -41,7 +42,7 @@ function parse_airport() {
         security=$other
         other=
       fi
-      echo "\"$mac\",\"$ssid\",\"$channel\",\"$rssi\",\"$security $other\""
+      echo "\"$mac\",\"$ssid\",\"$channel\",\"$rssi\",\"$security $other\"" >&2
     fi
   done
 }
@@ -69,7 +70,7 @@ function parse_iwlist() {
     fi
 
     if [[ -n "$mac" && -n "$ssid" && -n "$channel" && -n "$rssi" && -n "$security" ]]; then
-      echo "\"$mac\",\"$ssid\",\"$channel\",\"$rssi\",\"$security\""
+      echo "\"$mac\",\"$ssid\",\"$channel\",\"$rssi\",\"$security\"" >&2
       mac=
       ssid=
       channel=
@@ -79,6 +80,14 @@ function parse_iwlist() {
   done
 }
 
+#
+# The main function.
+# Globals:
+#   AIRPORT
+#   IWLIST
+#   INTERFACE
+#   SELF_NAME
+#
 function main() {
   # cat "test-output-iwlist.txt" | parse_iwlist
   # cat "test-output-airport.txt" | parse_airport
@@ -86,8 +95,14 @@ function main() {
   if [[ -f "$AIRPORT" ]]; then
     $AIRPORT "$INTERFACE" -s | parse_airport
   elif [[ -n "$IWLIST" ]]; then
-    $IWLIST "$INTERFACE" scan | parse_iwlist
+    if [[ -n $INTERFACE ]]; then
+      $IWLIST "$INTERFACE" scan | parse_iwlist
+    else
+      echo "usage: ${SELF_NAME} interface" >&2
+      exit 1
+    fi
   fi
+  exit 0
 }
 
 main "$@"
