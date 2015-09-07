@@ -1,0 +1,93 @@
+#!/bin/bash
+#
+# The 'iwlscan' is used to scan for available wireless networks.
+# Gives the list of Access Points and Ad-Hoc cells in range in CSV format.
+#
+# Source code: https://github.com/Datamart/iwlscan
+# Style guide: https://google.github.io/styleguide/shell.xml
+#
+# Copyright 2015 Datamart Inc. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS-IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+readonly AIRPORT="/System/Library/PrivateFrameworks/Apple80211.framework/Versions/A/Resources/airport"
+readonly IWLIST=$(which iwlist)
+readonly INTERFACE=$1
+readonly HEADERS="\"MAC\",\"SSID\",\"CHANNEL\",\"RSSI\",\"SECURITY\""
+
+
+function parse_airport() {
+  echo "$HEADERS"
+  while read ssid mac rssi channel ht cc security other; do
+    if [[ "SSID" != "$ssid" ]]; then
+      if [[ 17 -ne ${#mac} ]]; then
+        mac="$(echo $mac | tr '[A-Z]' '[a-z]')"
+        ssid="$ssid $mac"
+        mac=$rssi
+        rssi=$channel
+        channel=$ht
+        ht=$cc
+        cc=$security
+        security=$other
+        other=
+      fi
+      echo "\"$mac\",\"$ssid\",\"$channel\",\"$rssi\",\"$security $other\""
+    fi
+  done
+}
+
+function parse_iwlist() {
+  echo "$HEADERS"
+  while read line; do
+    # echo "$line"
+    if [[ "$line" =~ "Address: " ]]; then
+      mac=${line##*Address: }
+      mac="$(echo $mac | tr '[A-Z]' '[a-z]')"
+    elif [[ "$line" =~ "ESSID:" ]]; then
+      ssid=${line##*ESSID:}
+      ssid=${ssid:1}
+      ssid=${ssid:0:$((${#ssid}-1))}
+    elif [[ "$line" =~ "(Channel" ]]; then
+      channel=${line##*Channel };
+      channel=${channel:0:$((${#channel}-1))}
+    elif [[ "$line" =~ "Quality" ]]; then
+      rssi=${line##*Signal level}
+      rssi=${rssi%% *}
+      rssi=${rssi:1}
+    elif [[ "$line" =~ "IE: " ]]; then
+      security=${line##*IE: }
+    fi
+
+    if [[ -n "$mac" && -n "$ssid" && -n "$channel" && -n "$rssi" && -n "$security" ]]; then
+      echo "\"$mac\",\"$ssid\",\"$channel\",\"$rssi\",\"$security\""
+      mac=
+      ssid=
+      channel=
+      rssi=
+      security=
+    fi
+  done
+}
+
+function main() {
+  # cat "test-output-iwlist.txt" | parse_iwlist
+  # cat "test-output-airport.txt" | parse_airport
+
+  if [[ -f "$AIRPORT" ]]; then
+    $AIRPORT "$INTERFACE" -s | parse_airport
+  elif [[ -n "$IWLIST" ]]; then
+    $IWLIST "$INTERFACE" scan | parse_iwlist
+  fi
+}
+
+main "$@"

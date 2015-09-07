@@ -1,0 +1,8 @@
+                             SSID BSSID             RSSI CHANNEL HT CC SECURITY (auth/unicast/group)
+                            Anton 8c:2d:aa:3e:9d:91 -84  11      Y  -- WPA2(PSK/AES/AES) 
+                       PC_Network 64:70:02:9f:6a:db -83  10,-1   Y  US WPA2(PSK/AES/AES) 
+                      DSL_2640NRU cc:b2:55:30:7b:49 -71  6       Y  -- WPA2(PSK/AES,TKIP/TKIP) 
+            TP-LINK_AstraNet 5-13 f8:1a:67:46:0f:26 -76  6,-1    Y  UA WPA(PSK/AES/AES) WPA2(PSK/AES/AES) 
+                           eth17g 0e:18:d6:c5:74:72 -57  1       Y  -- WPA(PSK/AES,TKIP/TKIP) WPA2(PSK/AES,TKIP/TKIP) 
+                         datamart 0a:18:d6:9d:17:69 -79  1       Y  -- WPA(802.1x/AES,TKIP/TKIP) WPA2(802.1x/AES,TKIP/TKIP) 
+                         datamart 0a:18:d6:c5:74:72 -53  1       Y  -- WPA(802.1x/AES,TKIP/TKIP) WPA2(802.1x/AES,TKIP/TKIP) 
