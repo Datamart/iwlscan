@@ -28,56 +28,84 @@ readonly HEADERS="\"MAC\",\"SSID\",\"CHANNEL\",\"RSSI\",\"SECURITY\""
 readonly MAC_LENGTH=17
 
 function parse_airport() {
-  echo "$HEADERS"
+  echo "${HEADERS}"
   while read ssid mac rssi channel ht cc security other; do
-    if [[ "SSID" != "$ssid" ]]; then
-      if [[ $MAC_LENGTH -ne ${#mac} ]]; then
-        mac="$(echo $mac | tr '[A-Z]' '[a-z]')"
-        ssid="$ssid $mac"
-        mac=$rssi
-        rssi=$channel
-        channel=$ht
-        ht=$cc
-        cc=$security
-        security=$other
+    if [[ "SSID" != "${ssid}" ]]; then
+      if [[ ${MAC_LENGTH} -ne ${#mac} ]]; then
+        mac="$(echo ${mac} | tr '[A-Z]' '[a-z]')"
+        ssid="${ssid} ${mac}"
+        mac="${rssi}"
+        rssi="${channel}"
+        channel="${ht}"
+        ht="${cc}"
+        cc="${security}"
+        security="${other}"
         other=
       fi
-      echo "\"$mac\",\"$ssid\",\"$channel\",\"$rssi\",\"$security $other\"" >&2
+      print_row "${mac}" "${ssid}" "${channel}" "${rssi}" "${security} ${other}"
     fi
   done
 }
 
 function parse_iwlist() {
-  echo "$HEADERS"
+  echo "${HEADERS}"
   while read line; do
-    # echo "$line"
-    if [[ "$line" =~ "Address: " ]]; then
-      mac=${line##*Address: }
-      mac="$(echo $mac | tr '[A-Z]' '[a-z]')"
-    elif [[ "$line" =~ "ESSID:" ]]; then
-      ssid=${line##*ESSID:}
-      ssid=${ssid:1}
-      ssid=${ssid:0:$((${#ssid}-1))}
-    elif [[ "$line" =~ "(Channel" ]]; then
-      channel=${line##*Channel };
-      channel=${channel:0:$((${#channel}-1))}
-    elif [[ "$line" =~ "Quality" ]]; then
-      rssi=${line##*Signal level}
-      rssi=${rssi%% *}
-      rssi=${rssi:1}
-    elif [[ "$line" =~ "IE: " ]]; then
-      security=${line##*IE: }
-    fi
-
-    if [[ -n "$mac" && -n "$ssid" && -n "$channel" && -n "$rssi" && -n "$security" ]]; then
-      echo "\"$mac\",\"$ssid\",\"$channel\",\"$rssi\",\"$security\"" >&2
+    if [[ "${line}" =~ "Cell " ]]; then
+      print_row "${mac}" "${ssid}" "${channel}" "${rssi}" "${security}" "${key}"
       mac=
       ssid=
       channel=
       rssi=
       security=
+      key=
+    fi
+
+    if [[ "${line}" =~ "Address: " ]]; then
+      mac="${line##*Address: }"
+      mac="$(echo $mac | tr '[A-Z]' '[a-z]')"
+    elif [[ "${line}" =~ "ESSID:" ]]; then
+      ssid="${line##*ESSID:}"
+      ssid="${ssid:1}"
+      ssid="${ssid:0:$((${#ssid}-1))}"
+    elif [[ "${line}" =~ "(Channel" ]]; then
+      channel="${line##*Channel }"
+      channel="${channel:0:$((${#channel}-1))}"
+    elif [[ "${line}" =~ "Quality" ]]; then
+      rssi="${line##*Signal level}"
+      rssi="${rssi%% *}"
+      rssi="${rssi:1}"
+    elif [[ "${line}" =~ "Encryption key" ]]; then
+      key="${line##*Encryption key:}"
+    elif [[ "${line}" =~ "IE: " ]]; then
+      if [[ ! "${line}" =~ "Unknown:" ]]; then
+        if [[ -n "${security}" ]]; then
+          security="${security}, ${line##*IE: }"
+        else
+          security="${line##*IE: }"
+        fi
+      fi
     fi
   done
+
+  print_row "${mac}" "${ssid}" "${channel}" "${rssi}" "${security}" "${key}"
+}
+
+function print_row() {
+  local mac=$1
+  local ssid=$2
+  local channel=$3
+  local rssi=$4
+  local security=$5
+  local key=$6
+
+  if [[ -n "${mac}" && -n "${ssid}" && -n "${channel}" && -n "${rssi}" ]]; then
+    if [[ "${key}" =~ "off" ]]; then
+      security='Open'
+    elif [[ -z "${security}" ]]; then
+      security='WEP'
+    fi
+    echo "\"${mac}\",\"${ssid}\",\"${channel}\",\"${rssi}\",\"${security}\"" >&2
+  fi
 }
 
 #
@@ -89,13 +117,13 @@ function parse_iwlist() {
 #   SELF_NAME
 #
 function main() {
-  # cat "test-output-iwlist.txt" | parse_iwlist
-  # cat "test-output-airport.txt" | parse_airport
+  # cat 'test-output-iwlist.txt' | parse_iwlist
+  # cat 'test-output-airport.txt' | parse_airport
 
-  if [[ -f "$AIRPORT" ]]; then
+  if [[ -f "${AIRPORT}" ]]; then
     $AIRPORT "$INTERFACE" -s | parse_airport
-  elif [[ -n "$IWLIST" ]]; then
-    if [[ -n $INTERFACE ]]; then
+  elif [[ -n "${IWLIST}" ]]; then
+    if [[ -n "${INTERFACE}" ]]; then
       $IWLIST "$INTERFACE" scan | parse_iwlist
     else
       echo "usage: ${SELF_NAME} interface" >&2

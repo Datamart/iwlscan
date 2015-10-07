@@ -1,22 +1,22 @@
 ath0      Scan completed :
-          Cell 01 - Address: DC:9F:DB:08:49:DE
-                    ESSID:"Satek"
+          Cell 01 - Address: AA:BB:CC:DD:EE:01
+                    ESSID:"w0rk-wiF1"
                     Mode:Master
-                    Frequency:5.54 GHz (Channel 8)
-                    Quality=28/94  Signal level=-68 dBm  Noise level=-92 dBm
+                    Frequency:5.54 GHz (Channel 1)
+                    Quality=28/94  Signal level=-10 dBm  Noise level=-92 dBm
                     Encryption key:on
                     Bit Rates:6 Mb/s; 9 Mb/s; 12 Mb/s; 18 Mb/s; 24 Mb/s
                               36 Mb/s; 48 Mb/s; 54 Mb/s
                     Extra:bcn_int=100
-                    IE: IEEE 802.11i/WPA2 Version 1
-                        Group Cipher : CCMP
-                        Pairwise Ciphers (1) : CCMP
+                    IE: WPA Version 1
+                        Group Cipher : TKIP
+                        Pairwise Ciphers (1) : TKIP
                         Authentication Suites (1) : PSK
                     Extra:mtik_ie=dd2a000c42000000011e0014000000661a05000041502d43454e54524f2d35000000000000000000
-          Cell 01 - Address: 00:26:2A:F6:24:53
+          Cell 02 - Address: AA:BB:CC:DD:EE:02
                     Channel:1
-                    Frequency:2.412 GHz (Channel 1)
-                    Quality=51/70  Signal level=-59 dBm  
+                    Frequency:2.412 GHz (Channel 2)
+                    Quality=51/70  Signal level=-20 dBm  
                     Encryption key:on
                     ESSID:"h0m3-wiF1"
                     Bit Rates:1 Mb/s; 2 Mb/s; 5.5 Mb/s; 11 Mb/s; 6 Mb/s
@@ -25,24 +25,20 @@ ath0      Scan completed :
                     Mode:Master
                     Extra:tsf=0000010a52e1c237
                     Extra: Last beacon: 119492ms ago
-                    IE: Unknown: 000942616C6C797279616E
-                    IE: Unknown: 010582848B960C
-                    IE: Unknown: 030101
-                    IE: Unknown: 2A0104
+                    IE: Unknown: 0706555320010B1B
                     IE: IEEE 802.11i/WPA2 Version 1
                         Group Cipher : TKIP
                         Pairwise Ciphers (1) : CCMP
                         Authentication Suites (1) : PSK
-                    IE: Unknown: 32080C1218243048606C
                     IE: WPA Version 1
                         Group Cipher : TKIP
                         Pairwise Ciphers (1) : TKIP
                         Authentication Suites (1) : PSK
-          Cell 04 - Address: 00:22:75:AC:B8:A6
-                    ESSID:"RBP"
+          Cell 03 - Address: AA:BB:CC:DD:EE:03
+                    ESSID:"cafe-wiF1"
                     Mode:Managed
-                    Frequency:2.462 GHz (Channel 11)
-                    Quality:1/5  Signal level:-80 dBm  Noise level:-92 dBm
+                    Frequency:2.462 GHz (Channel 3)
+                    Quality:1/5  Signal level:-30 dBm  Noise level:-92 dBm
                     IE: IEEE 802.11i/WPA2 Version 1
                         Group Cipher : TKIP
                         Pairwise Ciphers (2) : TKIP CCMP
@@ -51,6 +47,24 @@ ath0      Scan completed :
                         Group Cipher : TKIP
                         Pairwise Ciphers (2) : TKIP CCMP
                         Authentication Suites (1) : PSK
+                    Encryption key:on
+                    Bit Rates:1 Mb/s; 2 Mb/s; 5.5 Mb/s; 11 Mb/s; 9 Mb/s
+                              18 Mb/s; 36 Mb/s; 54 Mb/s; 6 Mb/s; 12 Mb/s
+                              24 Mb/s; 48 Mb/s
+          Cell 04 - Address: AA:BB:CC:DD:EE:04
+                    ESSID:"open-wiF1"
+                    Mode:Managed
+                    Frequency:2.462 GHz (Channel 4)
+                    Quality:1/5  Signal level:-40 dBm  Noise level:-92 dBm
+                    Encryption key:off
+                    Bit Rates:1 Mb/s; 2 Mb/s; 5.5 Mb/s; 11 Mb/s; 9 Mb/s
+                              18 Mb/s; 36 Mb/s; 54 Mb/s; 6 Mb/s; 12 Mb/s
+                              24 Mb/s; 48 Mb/s
+          Cell 05 - Address: AA:BB:CC:DD:EE:05
+                    ESSID:"wepX-wiF1"
+                    Mode:Managed
+                    Frequency:2.462 GHz (Channel 5)
+                    Quality:1/5  Signal level:-50 dBm  Noise level:-92 dBm
                     Encryption key:on
                     Bit Rates:1 Mb/s; 2 Mb/s; 5.5 Mb/s; 11 Mb/s; 9 Mb/s
                               18 Mb/s; 36 Mb/s; 54 Mb/s; 6 Mb/s; 12 Mb/s
